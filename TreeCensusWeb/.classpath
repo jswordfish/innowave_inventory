@@ -33,5 +33,8 @@
 			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/innowaveIT/Basic Project setup/common Jars/CommonRepository-0.0.1-RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/innowaveIT/Basic Project setup/common Jars/CommonService-0.0.1-RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/innowaveIT/Basic Project setup/common Jars/CommonWeb-0.0.1-RELEASE.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

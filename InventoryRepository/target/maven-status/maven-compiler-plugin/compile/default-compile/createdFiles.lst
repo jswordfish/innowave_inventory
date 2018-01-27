@@ -1,0 +1,6 @@
+com\innowave\mahaulb\repository\inventory\dao\master\TmInvMaterial.class
+com\innowave\mahaulb\repository\inventory\dao\master\TmInvMaterialType.class
+com\innowave\mahaulb\repository\inventory\dao\master\inventory\InventoryRepo.class
+com\innowave\mahaulb\repository\inventory\dao\master\inventory\InventoryRepoImpl.class
+com\innowave\mahaulb\repository\inventory\dao\master\TmInvMaterialTypeStoreMapping.class
+com\innowave\mahaulb\repository\inventory\dao\master\TmInvStore.class

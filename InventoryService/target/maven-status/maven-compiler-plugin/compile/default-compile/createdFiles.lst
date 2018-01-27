@@ -1,0 +1,5 @@
+com\innowave\mahaulb\service\inventory\dto\master\InventoryMasterMaterialTypeForm.class
+com\innowave\mahaulb\service\inventory\service\MasterMaterialTypeServImpl.class
+com\innowave\mahaulb\service\inventory\service\MasterMaterialTypeServ.class
+com\innowave\mahaulb\service\inventory\transfers\MaterialTypeTransfer.class
+com\innowave\mahaulb\service\inventory\service\MasterMaterialMappingServ.class

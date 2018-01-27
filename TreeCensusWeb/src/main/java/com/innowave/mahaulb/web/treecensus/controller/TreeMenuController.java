@@ -90,11 +90,11 @@ public class TreeMenuController {
 	
 	
 	@RequestMapping(value = "/viewtreename", method = RequestMethod.GET)
-    public String viewTreeName(Locale locale,ModelMap model){
+    public ModelAndView viewTreeName(Locale locale,ModelMap model){
 		model.addAttribute("treename", new TreeMasterMasForm() );
 		model.addAttribute("treenamesearch", new TreeNameSearchDto() );
 		model.addAttribute("ulbId",getSessionUser().getUlbId());
-	    return prefixURL+"/view-treename";
+	    return new ModelAndView(prefixURL+"/view-treename","command",model);
     }
 	
 	@RequestMapping(value = "/viewtreespacies", method = RequestMethod.GET)

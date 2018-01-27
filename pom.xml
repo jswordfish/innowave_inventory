@@ -24,10 +24,11 @@
 	</properties>
 	
 	<modules>
+		<!-- Don't chnge the same  -->
 		<!-- <module>MahaULBUtils</module>
 		<module>CommonRepository</module>
 		<module>CommonService</module>
-		<module>CommonWeb</module> -->
+		<module>CommonWeb</module>  -->
 
 		<module>TreeCensusRepository</module>
 		<module>TreeCensusService</module>
