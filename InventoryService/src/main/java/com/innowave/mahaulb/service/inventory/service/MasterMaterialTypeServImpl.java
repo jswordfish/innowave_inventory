@@ -6,23 +6,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.innowave.mahaulb.repository.inventory.dao.master.TmInvMaterialType;
-import com.innowave.mahaulb.repository.inventory.dao.master.inventory.InventoryRepo;
+import com.innowave.mahaulb.repository.inventory.repo.MaterialTypeRepo;
 
 @Service("MasterMaterialTypeServ")
 public class MasterMaterialTypeServImpl implements MasterMaterialTypeServ{
 
 	@Autowired
-	private InventoryRepo inventoryRepo;
-	@Override
-	public int add(TmInvMaterialType invMaterialType) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	private MaterialTypeRepo inventoryRepo;
+	
 
 	@Override
-	public List<TmInvMaterialType> getMaterialTypeList(
-			TmInvMaterialType invMaterialType) {
-		return inventoryRepo.getTreeNameMasterList(invMaterialType);
+	public List<TmInvMaterialType> getMaterialTypeList(Integer ulbId,String parentFlag) {
+		return inventoryRepo.getMasterTypeistByUlbAndParentTyp(ulbId,parentFlag);
 	}
+
+
+	@Override
+	public void saveOrUpdate(TmInvMaterialType invMaterialType) {
+		inventoryRepo.saveOrUpdate(invMaterialType);
+		
+	}
+
+
+	@Override
+	public List<TmInvMaterialType> getMaterialTypeByParentType(Integer ulbId,
+			String materialTypId, String parentMaterialTyp) {
+		return inventoryRepo.fetchMaterialTypeByParentType(ulbId, materialTypId, parentMaterialTyp);
+	}
+
+
+
 
 }

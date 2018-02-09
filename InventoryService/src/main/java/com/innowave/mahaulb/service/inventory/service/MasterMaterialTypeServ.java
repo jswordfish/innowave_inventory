@@ -6,7 +6,8 @@ import com.innowave.mahaulb.repository.inventory.dao.master.TmInvMaterialType;
 
 public interface MasterMaterialTypeServ {
 
-	public int add(TmInvMaterialType invMaterialType);
-	public List<TmInvMaterialType> getMaterialTypeList(TmInvMaterialType invMaterialType);
+	public void saveOrUpdate(TmInvMaterialType invMaterialType);
+	public List<TmInvMaterialType> getMaterialTypeList(Integer ulbId,String parentFlag);
+	public List<TmInvMaterialType> getMaterialTypeByParentType(Integer ulbId,String materialTypId,String parentMaterialTyp);
 	
 }

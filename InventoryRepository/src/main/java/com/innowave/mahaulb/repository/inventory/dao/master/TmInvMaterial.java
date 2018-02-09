@@ -3,12 +3,16 @@ package com.innowave.mahaulb.repository.inventory.dao.master;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -107,7 +111,8 @@ public class TmInvMaterial implements java.io.Serializable {
 	}
 
 	@Id
-
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="inventory.sq_inv_material_id")
+	@SequenceGenerator(name="inventory.sq_inv_material_id", sequenceName = "inventory.sq_inv_material_id", allocationSize = 1)
 	@Column(name = "material_id", unique = true, nullable = false)
 	public long getMaterialId() {
 		return this.materialId;

@@ -21,6 +21,12 @@
 			<artifactId>CommonService</artifactId>
 			<version>0.0.1-RELEASE</version>
 		</dependency>
+		
+		<dependency>
+	    <groupId>com.innowave</groupId>
+	    <artifactId>MahaULBUtils</artifactId>
+	    <version>0.0.1-RELEASE</version>
+  	</dependency>
 		<dependency>
 			<groupId>com.innowave</groupId>
 			<artifactId>InventoryRepository</artifactId>

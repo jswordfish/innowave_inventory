@@ -1,7 +1,9 @@
 package com.innowave.mahaulb.service.inventory.dto.master;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.innowave.mahaulb.repository.inventory.dao.master.TmInvMaterialType;
 
@@ -13,21 +15,20 @@ public class InventoryMasterMaterialTypeForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String materialTypeCode;
+	public HashMap<Long, String> getSelectedParentType() {
+		return selectedParentType;
+	}
+
+	public void setSelectedParentType(HashMap<Long, String> selectedParentType) {
+		this.selectedParentType = selectedParentType;
+	}
+
 	private String materialTypeName;
 	private String materialDesc;
+	private HashMap<Long, String> selectedParentType;
 	private boolean isActive;
-	private int  ulbId;
-	private List<TmInvMaterialType> parentMaterialType;
-	private List<String> parentMaterialTypeName;
-	public List<String> getParentMaterialTypeName() {
-		return parentMaterialTypeName;
-	}
-
-	public void setParentMaterialTypeName(List<String> parentMaterialTypeName) {
-		this.parentMaterialTypeName = parentMaterialTypeName;
-	}
-
 	private boolean isParentType;
+	private int ulbId;
 
 	public String getMaterialTypeCode() {
 		return materialTypeCode;
@@ -53,14 +54,6 @@ public class InventoryMasterMaterialTypeForm implements Serializable {
 		this.materialDesc = materialDesc;
 	}
 
-	public List<TmInvMaterialType> getParentMaterialType() {
-		return parentMaterialType;
-	}
-
-	public void setParentMaterialType(List<TmInvMaterialType> parentMaterialType) {
-		this.parentMaterialType = parentMaterialType;
-	}
-
 	public boolean isParentType() {
 		return isParentType;
 	}
@@ -76,6 +69,7 @@ public class InventoryMasterMaterialTypeForm implements Serializable {
 	public void setParentType(boolean isParentType) {
 		this.isParentType = isParentType;
 	}
+
 	public int getUlbId() {
 		return ulbId;
 	}
