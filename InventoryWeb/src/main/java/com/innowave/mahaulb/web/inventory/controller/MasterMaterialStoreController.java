@@ -155,7 +155,7 @@ public class MasterMaterialStoreController {
 		req.getSession().setAttribute("materialstoreform", materialStoreForm);
 		return prefixURL + "/master-add-store";
 	}
-	@RequestMapping(value = "/search", params ="resetMaterial",method = RequestMethod.POST)
+	@RequestMapping(value = "/search", params ="resetmaterialstore",method = RequestMethod.POST)
 	public String resetMaterialStore(Locale locale, ModelMap model, HttpServletRequest req) {
 		MaterialStoreForm materialStoreForm= new MaterialStoreForm();
 		int ulbId = getSessionUser().getUlbId();
@@ -186,9 +186,12 @@ public class MasterMaterialStoreController {
 	}
 	
 	@RequestMapping(value = "/search",params ="searchmaterial", method = RequestMethod.POST)
-	public String searchMaterialStore(@ModelAttribute("storeForm") MaterialStoreForm materialStoreForm,Locale locale,HttpSession session,
+	public ModelAndView searchMaterialStore(@ModelAttribute("storeForm") MaterialStoreForm materialStoreForm,Locale locale,HttpSession session,
 			HttpServletRequest request,ModelMap model)
 			{
+			if(materialStoreForm.getStoreCode()!=null && !materialStoreForm.getStoreCode().isEmpty()){
+				return new InventoryMenuController().searchStore(locale, model, request);
+			}
 		int ulbId = getSessionUser().getUlbId();
 		model.addAttribute("ulbId", ulbId);
 		String dep = request.getParameter("selectedDept");
@@ -221,7 +224,7 @@ public class MasterMaterialStoreController {
 		model.addAttribute("stores", stores);
 		model.addAttribute("dtos", materialStoreDTO);
 		request.getSession().setAttribute("materialstoreform", materialStoreForm);
-		return prefixURL+"/master-search-store";
+		 return new ModelAndView(prefixURL+"/master-search-store","command",model);
 			}
 	@RequestMapping(value = "/editmaterialStore", method = RequestMethod.GET)
 	public String editmaterialStore(Locale locale,HttpSession session, 
