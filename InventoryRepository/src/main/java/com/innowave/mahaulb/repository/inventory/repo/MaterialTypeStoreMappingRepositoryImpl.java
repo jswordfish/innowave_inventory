@@ -53,7 +53,7 @@ public class MaterialTypeStoreMappingRepositoryImpl implements MaterialTypeStore
 		CriteriaBuilder builder = currentSession.getCriteriaBuilder();
 		CriteriaDelete<TmInvMaterialTypeStoreMapping> query = builder.createCriteriaDelete(TmInvMaterialTypeStoreMapping.class);
 		Root e = query.from(TmInvMaterialTypeStoreMapping.class);
-		query.where(builder.lessThanOrEqualTo(e.get("materialTypeStoreMapId"), mapping.getMaterialTypeStoreMapId()));
+		query.where(builder.equal(e.get("materialTypeStoreMapId"), mapping.getMaterialTypeStoreMapId()));
 		return currentSession.createQuery(query).executeUpdate();
 	}
 	

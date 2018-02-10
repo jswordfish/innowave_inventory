@@ -48,12 +48,14 @@ public class MasterMaterialTypeMappingController {
 	
 	@Autowired
 	private TmUlbMasterRepo ulbMasterRepo;
+	
+	
 
 	private String departmentSelected;
 
 	private String storeSelected;
 
-	private final String prefixURL = "inventory/masters";
+	private final String prefixURL = "inventory";
 
 	public UserBean getSessionUser() {
 		// Session session = sessionFactory.getCurrentSession();
@@ -92,6 +94,7 @@ public class MasterMaterialTypeMappingController {
 		req.getSession().setAttribute("invForm", form);
 	    return prefixURL+"/master-search-materialmapping";
     }
+	
 	
 	private List<MaterialTypeMappingDTO> fetchMappings(String store, Integer ulbId, String dep){
 		List<TmInvMaterialTypeStoreMapping> mappings = mappingRepository.getMappings(store, ulbId);
@@ -189,7 +192,7 @@ public class MasterMaterialTypeMappingController {
 			Long.parseLong(store);
 		}
 		catch(NumberFormatException e) {
-			return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+			return delegate(locale, model, req);
 		}
 		
 		InventoryMaterialMappingForm form = (InventoryMaterialMappingForm) req.getSession().getAttribute("invForm");
@@ -217,6 +220,36 @@ public class MasterMaterialTypeMappingController {
 		req.getSession().setAttribute("invForm", form);
 	    return prefixURL+"/master-add-materialmapping";
     }
+	
+	
+	private String delegate(Locale locale,ModelMap model,HttpServletRequest req) {
+		int ulbId=getSessionUser().getUlbId();	
+		model.addAttribute("ulbId", ulbId);
+		
+		InventoryMaterialMappingForm form = (InventoryMaterialMappingForm) req.getSession().getAttribute("invForm");
+			if(form != null) {
+				model.addAttribute("materialMappingForm", form);
+			}
+			else {
+				model.addAttribute("materialMappingForm", new InventoryMaterialMappingForm());
+			}
+		
+	
+		//model.addAttribute("treeCensusDetail", ttTreeCensusDetails);
+		
+		List<TmCmDepartment> deps = materialTypeRepository.getAllDepartments(ulbId);
+		
+		List<TmInvStore> stores = mappingRepository.getAllStores(ulbId);
+		
+		
+		//req.setAttribute("departments", deps);
+		//req.setAttribute("stores", stores);
+		model.addAttribute("departments", deps);
+		model.addAttribute("stores", stores);
+		
+		
+	    return prefixURL+"/master-search-materialmapping";
+	}
 
 	@RequestMapping(value = "/editmaterialmapping", method = RequestMethod.GET)
     public String editmaterialmapping(Locale locale,ModelMap model,HttpServletRequest req){
@@ -262,7 +295,8 @@ public class MasterMaterialTypeMappingController {
 		
 		model.addAttribute("dtos", dtos);
 	   // return prefixURL+"/view-materialmappingsearch";
-		return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+		//return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+		return delegate(locale, model, req);
 	
 	}
 
@@ -323,7 +357,8 @@ public class MasterMaterialTypeMappingController {
 		
 		model.addAttribute("dtos", dtos);
 	   // return prefixURL+"/view-materialmappingsearch";
-		return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+		//return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+		return delegate(locale, model, req);
     }
 	
 	

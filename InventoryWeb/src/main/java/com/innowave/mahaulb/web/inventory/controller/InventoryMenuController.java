@@ -48,7 +48,7 @@ public class InventoryMenuController {
 
 public static final Logger logger = LoggerFactory.getLogger(InventoryMenuController.class);
 	
-private final String prefixURL = "inventory/masters";
+private final String prefixURL = "inventory";
 
 	@Autowired
 	private Environment env;
