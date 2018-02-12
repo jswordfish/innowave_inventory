@@ -6,9 +6,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,6 +33,8 @@ public class TtInvMaterialOpbal implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = -2621281582121459184L;
 	private long matOpbalId;
+	
+	
 	private TmCmFinancialMas tmCmFinancialMas;
 	private TmUlb tmUlb;
 	private TmInvMaterial tmInvMaterial;
@@ -95,7 +100,8 @@ public class TtInvMaterialOpbal implements java.io.Serializable {
 	}
 
 	@Id
-
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="inventory.sq_inv_mat_opbal_id")
+	@SequenceGenerator(name="inventory.sq_inv_mat_opbal_id", sequenceName = "inventory.sq_inv_mat_opbal_id", allocationSize = 1)
 	@Column(name = "mat_opbal_id", unique = true, nullable = false)
 	public long getMatOpbalId() {
 		return this.matOpbalId;
@@ -105,7 +111,7 @@ public class TtInvMaterialOpbal implements java.io.Serializable {
 		this.matOpbalId = matOpbalId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "fin_id", nullable = false)
 	public TmCmFinancialMas getTmCmFinancialMas() {
 		return this.tmCmFinancialMas;

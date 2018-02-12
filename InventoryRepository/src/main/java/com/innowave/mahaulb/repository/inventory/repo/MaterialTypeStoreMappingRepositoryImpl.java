@@ -10,12 +10,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -112,7 +111,8 @@ public class MaterialTypeStoreMappingRepositoryImpl implements MaterialTypeStore
 		else {
 			//update
 			mapping.setUpdatedDate(new Date());
-			Mapper mapper = new DozerBeanMapper();
+			//Mapper mapper = new DozerBeanMapper();
+			ModelMapper mapper = new ModelMapper();
 			mapping.setMaterialTypeStoreMapId(mapping2.getMaterialTypeStoreMapId());
 			mapping.setCreatedDate(mapping2.getCreatedDate());
 			mapper.map(mapping, mapping2);
