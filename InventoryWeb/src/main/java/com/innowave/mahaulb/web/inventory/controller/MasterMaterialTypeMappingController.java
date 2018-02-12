@@ -55,7 +55,7 @@ public class MasterMaterialTypeMappingController {
 
 	private String storeSelected;
 
-	private final String prefixURL = "inventory";
+	private final String prefixURL = "inventory/masters";
 
 	public UserBean getSessionUser() {
 		// Session session = sessionFactory.getCurrentSession();
