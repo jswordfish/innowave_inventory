@@ -115,7 +115,11 @@ public class InventoryMenuController {
 		model.addAttribute("departments", deps);
 		model.addAttribute("stores", stores);
 
-		return prefixURL + "/master-search-materialmapping";
+		//return prefixURL + "/master-search-materialmapping";
+		/**
+		 *@TODO - Remove this method from here as all methods here uses the global prefix except this one.
+		 */
+		return "inventory"+ "/master-search-materialmapping";
 	}
 
 	@RequestMapping(value = "/addmaterialtype", method = RequestMethod.GET)
