@@ -3,6 +3,7 @@ package com.innowave.mahaulb.web.inventory.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -110,15 +111,18 @@ public class MasterMaterialTypeController {
     public String getParentForselectedMaterial(Locale locale,ModelMap model,HttpServletRequest req){
 		int ulbId=getSessionUser().getUlbId();	
 		model.addAttribute("ulbId", ulbId);
-		model.addAttribute("searchmaterialtyp", new InventoryMaterialMappingForm());
+		model.addAttribute("searchmaterialtyp", new SearchMaterialType());
 		String selectedId = req.getParameter("materialTypeId");
 		List<TmInvMaterialType> materialTypeList = materialTypeRepository.findTmInvMaterialTypesByULB(getSessionUser().getUlbId());
-		Set<TmInvMaterialType> parentMaterialType=null;
+		List<TmInvMaterialType> convertToList=null;
+		Set<TmInvMaterialType> parentMaterialType=new HashSet<>();
 		SearchMaterialType form = new SearchMaterialType();
 		for (TmInvMaterialType tmInvMaterialType : materialTypeList) {
 			if(tmInvMaterialType.getMaterialTypeId()==(Long.parseLong(selectedId)))
 			{
-				parentMaterialType=tmInvMaterialType.getTmInvMaterialTypes();
+				parentMaterialType.add(tmInvMaterialType);
+			//	materialTypeList=new ArrayList<>(parentMaterialType);
+				//parentMaterialType=tmInvMaterialType.getTmInvMaterialTypes();
 				form.setMaterialTypeId(tmInvMaterialType.getMaterialTypeId());
 				form.setMaterialTypeName(tmInvMaterialType.getMaterialTypeName());
 				break;

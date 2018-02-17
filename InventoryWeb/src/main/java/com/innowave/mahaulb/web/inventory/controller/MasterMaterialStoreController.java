@@ -31,6 +31,7 @@ import com.innowave.mahaulb.repository.inventory.repo.MaterialTypeStoreMappingRe
 import com.innowave.mahaulb.service.inventory.dto.master.MaterialStoreDTO;
 import com.innowave.mahaulb.service.inventory.dto.master.MaterialStoreForm;
 import com.innowave.mahaulb.service.inventory.service.MasterMaterialStoreServ;
+import com.innowave.mahaulb.web.inventory.controller.forms.InvMaterialSupplierForm;
 
 
 @Controller
@@ -74,8 +75,8 @@ public class MasterMaterialStoreController {
 		// Session session = sessionFactory.getCurrentSession();
 		return (UserBean) httpSession.getAttribute("userBeanObj");
 	}
-	@RequestMapping(value = "/saveMasterStore", method = RequestMethod.POST)
-	public String addMaterialStore(@ModelAttribute("materialstoreform") MaterialStoreForm materialStoreForm, Locale locale,HttpSession session, 
+	@RequestMapping(value = "/saveMasterStore" ,method = RequestMethod.POST)
+	public String saveMaterialData(@ModelAttribute("materialstoreform") MaterialStoreForm materialStoreForm, Locale locale,HttpSession session, 
 			HttpServletRequest request,ModelMap model)
 			{
 		try{
@@ -125,14 +126,13 @@ public class MasterMaterialStoreController {
 		masterMaterialStoreServ.saveOrUpdate(invStore);
 		model.put("message",messageSource.getMessage("lable.common.sucess.added", null, locale));
 		model.put("msgtype","success");
-		return addStore(locale,model,request);
 		}
 		catch(Exception e) {
  			e.printStackTrace();
  			model.put("message",messageSource.getMessage("lable.common.fail.add", null, locale));
 			model.put("msgtype","error");
 		}
-		return null;
+		return addStore(locale,model,request);
 			}
 	@RequestMapping(value = "/search", params ="addmaterial",method = RequestMethod.POST)
 	public String addStore(Locale locale, ModelMap model, HttpServletRequest req) {
@@ -148,7 +148,7 @@ public class MasterMaterialStoreController {
 		materialStoreForm.setCmDepartments(cmDepartments);
 		materialStoreForm.setTmUsers(usersList);
 		model.addAttribute("ulbId", ulbId);
-		model.addAttribute("cmDepartments", cmDepartments);
+		model.addAttribute("departments", cmDepartments);
 		model.addAttribute("usersList", usersList);
 		model.addAttribute("editMaping", false);
 		model.addAttribute("materialstoreform", materialStoreForm);
@@ -157,6 +157,19 @@ public class MasterMaterialStoreController {
 	}
 	@RequestMapping(value = "/search", params ="resetmaterialstore",method = RequestMethod.POST)
 	public String resetMaterialStore(Locale locale, ModelMap model, HttpServletRequest req) {
+		MaterialStoreForm materialStoreForm= new MaterialStoreForm();
+		int ulbId = getSessionUser().getUlbId();
+		List<TmCmDepartment> deps = materialTypeRepository.getAllDepartments(ulbId);
+		List<TmInvStore> stores = mappingRepository.getAllStores(ulbId);
+		model.addAttribute("departments", deps);
+		model.addAttribute("stores", stores);
+		model.addAttribute("ulbId", ulbId);
+		model.addAttribute("storeForm", materialStoreForm);
+		return prefixURL + "/master-search-store";
+	}
+	
+	@RequestMapping(value = "/saveMasterStore", params ="closestore",method = RequestMethod.POST)
+	public String closeMaterialAdd(Locale locale, ModelMap model, HttpServletRequest req) {
 		MaterialStoreForm materialStoreForm= new MaterialStoreForm();
 		int ulbId = getSessionUser().getUlbId();
 		List<TmCmDepartment> deps = materialTypeRepository.getAllDepartments(ulbId);
@@ -182,7 +195,7 @@ public class MasterMaterialStoreController {
 		model.addAttribute("stores", stores);
 		model.addAttribute("ulbId", ulbId);
 		model.addAttribute("storeForm", materialStoreForm);
-		return prefixURL + "/master-search-store";
+		return prefixURL + "/master-add-store";
 	}
 	
 	@RequestMapping(value = "/search",params ="searchmaterial", method = RequestMethod.POST)
@@ -190,7 +203,7 @@ public class MasterMaterialStoreController {
 			HttpServletRequest request,ModelMap model)
 			{
 			if(materialStoreForm.getStoreCode()!=null && !materialStoreForm.getStoreCode().isEmpty()){
-				return new InventoryMenuController().searchStore(locale, model, request);
+				return searchStore(locale, model, request);
 			}
 		int ulbId = getSessionUser().getUlbId();
 		model.addAttribute("ulbId", ulbId);
@@ -216,6 +229,7 @@ public class MasterMaterialStoreController {
 			dto.setDeptName(cmDepartment.getDepNameEn());
 			dto.setStoreId(tmInvStore.getStoreId());
 			dto.setStoreName(tmInvStore.getStoreName());
+			dto.setStoreCode(tmInvStore.getStoreCode());
 			materialStoreDTO.add(dto);	
 		}
 		materialStoreForm.setInvStores(invStores);
@@ -227,14 +241,25 @@ public class MasterMaterialStoreController {
 		 return new ModelAndView(prefixURL+"/master-search-store","command",model);
 			}
 	@RequestMapping(value = "/editmaterialStore", method = RequestMethod.GET)
-	public String editmaterialStore(Locale locale,HttpSession session, 
+	public String editmaterialStore(@ModelAttribute("storeForm") MaterialStoreForm materialStoreForm,Locale locale,HttpSession session, 
 			HttpServletRequest request,ModelMap model)
 			{
 		int ulbId = getSessionUser().getUlbId();
 		model.addAttribute("ulbId", ulbId);
 		Long materialStoreId = Long.parseLong(request.getParameter("storeId"));
-		MaterialStoreForm materialStoreForm=(MaterialStoreForm) request
-				.getSession().getAttribute("storeForm");
+		
+		/*MaterialStoreForm materialStoreForm=(MaterialStoreForm) request
+				.getSession().getAttribute("storeForm");*/
+		/*String dep = request.getParameter(materialStoreForm.getSelectedDept());
+		String store = request.getParameter(materialStoreForm.getSelectedInvStore());*/
+	//	MaterialStoreForm materialStoreForm = (MaterialStoreForm) request.getSession().getAttribute("storeForm");
+//		MaterialStoreForm materialStoreForm= new MaterialStoreForm();
+		/*materialStoreForm.setSelectedDept(dep);
+		materialStoreForm.setSelectedInvStore(store);*/
+		request.getSession().setAttribute("storeForm", materialStoreForm);
+//		model.addAttribute("storeForm", materialStoreForm);
+		//List<TmInvStore> invStores=masterMaterialStoreServ.getAllMaterialStoresByIds(ulbId,Long.parseLong(store),Integer.parseInt(dep));
+		//TmCmDepartment cmDepartment=cmDepartmentRepo.getDepartmentById(Integer.parseInt(dep));
 		List<MaterialStoreDTO> invStores=materialStoreForm.getMaterialStoreDTOs();
 		MaterialStoreDTO currentSelected=null;
 		for (MaterialStoreDTO materialStoreDTO : invStores) {
@@ -243,36 +268,51 @@ public class MasterMaterialStoreController {
 					break;
 				}
 		}
+		materialStoreForm.setStoreCode(currentSelected.getStoreCode());
+		materialStoreForm.setSelectedDept(currentSelected.getDeptName());
+		materialStoreForm.setStoreName(currentSelected.getStoreName());
 		materialStoreForm.setSelectMaterial(currentSelected);
+		List<TmCmDepartment> deps = materialTypeRepository.getAllDepartments(ulbId);
 		List<TmUsers> list=new ArrayList<TmUsers>();
 		TmUsers tmUser=tmUsersRepo.getEmployeeUser(getSessionUser().getUserName(), ulbId);
 		list.add(tmUser);
 		List<TmCmDepartment> cmDepartments=masterMaterialStoreServ.getAllDepartments(ulbId);
+		List<TmUsers> usersList=masterMaterialStoreServ.getUserList(ulbId);
 		materialStoreForm.setCmDepartments(cmDepartments);
 		materialStoreForm.setTmUsers(list);
+		model.addAttribute("usersList", usersList);
+		model.addAttribute("departments", deps);
 		model.addAttribute("ulbId", ulbId);
-		model.addAttribute("storeForm", materialStoreForm);
+		model.addAttribute("materialstoreform", materialStoreForm);
 		return prefixURL + "/master-add-store";
 			}
 	
 	
 	
 	@RequestMapping(value = "/deletematerialStore", method = RequestMethod.GET)
-	public ModelAndView deletematerialStore(Locale locale,HttpSession session, 
+	public ModelAndView deletematerialStore(@ModelAttribute("materialstoreform") MaterialStoreForm materialStoreForm,Locale locale,HttpSession session, 
 			HttpServletRequest request,ModelMap model)
 			{
 		try{
 		int ulbId=getSessionUser().getUlbId();	
 		model.addAttribute("ulbId", ulbId);
 		Long materialTypeStoreMapId = Long.parseLong(request.getParameter("storeId"));
-		Integer deptId=Integer.parseInt(request.getParameter("depId"));
+		Integer deptId=Integer.parseInt(request.getParameter("departId"));
 		MaterialStoreForm form = (MaterialStoreForm) request.getSession().getAttribute("storeForm");
 			
 		model.addAttribute("storeForm", form);
 		model.addAttribute("editMaping", true);
 		TmInvStore storeIdForDelete = new TmInvStore();
 		storeIdForDelete.setStoreId(materialTypeStoreMapId);
+		try {
 		int rem = masterMaterialStoreServ.removeStoreById(storeIdForDelete);
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+ 			model.put("message","Delete the Mapping before material");
+			model.put("msgtype","error");
+			return searchStore(locale, model, request);
+		}
 		List<TmInvStore> invStores=masterMaterialStoreServ.getAllMaterialStoresByIds(ulbId,materialTypeStoreMapId,deptId);
 		TmCmDepartment cmDepartment=cmDepartmentRepo.getDepartmentById(deptId);
 		List<MaterialStoreDTO> materialStoreDTO = new ArrayList<MaterialStoreDTO>();
@@ -294,17 +334,41 @@ public class MasterMaterialStoreController {
 		form.setMaterialStoreDTOs(materialStoreDTO);
 		
 		model.addAttribute("materialMappingForm", form);
-		model.put("message",messageSource.getMessage("lable.common.sucess.added", null, locale));
+		model.put("message",messageSource.getMessage("lable.common.sucess.deleted", null, locale));
 		model.put("msgtype","success");
 		model.addAttribute("dtos", materialStoreDTO);
 	   // return prefixURL+"/view-materialmappingsearch";
-		return new InventoryMenuController().searchStore(locale, model, request);
+		
 		}
 		catch(Exception e) {
  			e.printStackTrace();
- 			model.put("message",messageSource.getMessage("lable.common.fail.add", null, locale));
+ 			model.put("message",messageSource.getMessage("lable.common.fail.delete", null, locale));
 			model.put("msgtype","error");
 		}
-		return null;
+		return searchStore(locale, model, request);
+}
+	
+	public ModelAndView searchStore(Locale locale, ModelMap model,
+			HttpServletRequest req) {
+		int ulbId = getSessionUser().getUlbId();
+		MaterialStoreForm materialform = (MaterialStoreForm) req.getSession()
+				.getAttribute("materialstoreform");
+		MaterialStoreForm materialStoreForm = new MaterialStoreForm();
+		if (materialform != null) {
+			model.addAttribute("storeForm", materialform);
+		} else {
+			model.addAttribute("storeForm", new MaterialStoreForm());
+		}
+		List<TmInvStore> invStores = masterMaterialStoreServ
+				.getAllMaterialStores(ulbId);
+		List<TmCmDepartment> cmDepartments = masterMaterialStoreServ
+				.getAllDepartments(ulbId);
+		materialStoreForm.setCmDepartments(cmDepartments);
+		materialStoreForm.setInvStores(invStores);
+		model.addAttribute("ulbId", ulbId);
+		model.addAttribute("departments", cmDepartments);
+		model.addAttribute("stores", invStores);
+		return new ModelAndView(prefixURL + "/master-search-store", "command",
+				model);
 }
 }

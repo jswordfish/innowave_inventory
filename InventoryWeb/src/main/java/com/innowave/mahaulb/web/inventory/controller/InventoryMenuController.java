@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.innowave.mahaulb.common.dao.TmCmLookupDet;
 import com.innowave.mahaulb.common.dao.master.TmCmDepartment;
 import com.innowave.mahaulb.common.dao.master.TmUsers;
 import com.innowave.mahaulb.common.repository.TmCmDepartmentRepo;
@@ -38,7 +39,10 @@ import com.innowave.mahaulb.service.inventory.dto.master.InventoryMaterialMappin
 import com.innowave.mahaulb.service.inventory.dto.master.MaterialStoreForm;
 import com.innowave.mahaulb.service.inventory.dto.master.SearchMaterialType;
 import com.innowave.mahaulb.service.inventory.service.MasterMaterialStoreServ;
+import com.innowave.mahaulb.service.inventory.service.MasterMaterialSupplierServ;
 import com.innowave.mahaulb.service.inventory.service.MasterMaterialTypeServ;
+import com.innowave.mahaulb.web.inventory.controller.forms.InvMaterialForm;
+import com.innowave.mahaulb.web.inventory.controller.forms.InvMaterialSupplierForm;
 
 @Controller
 @PropertySource("classpath:application.properties")
@@ -53,6 +57,10 @@ public class InventoryMenuController {
 
 	@Autowired
 	private Environment env;
+	
+	
+	@Autowired
+	MasterMaterialSupplierServ masterMaterialSupplierServ;
 
 	@Autowired
 	private MaterialTypeRepo materialTypeRepository;
@@ -116,10 +124,8 @@ public class InventoryMenuController {
 		model.addAttribute("stores", stores);
 
 		//return prefixURL + "/master-search-materialmapping";
-		/**
-		 *@TODO - Remove this method from here as all methods here uses the global prefix except this one.
-		 */
-		return "inventory"+ "/master-search-materialmapping";
+		
+		return prefixURL+ "/master-search-materialmapping";
 	}
 
 	@RequestMapping(value = "/addmaterialtype", method = RequestMethod.GET)
@@ -206,5 +212,33 @@ public class InventoryMenuController {
 		detailsLst = masterMaterialTypServ.getMaterialTypeList(getSessionUser()
 				.getUlbId(), "Y");
 		return detailsLst;
+	}
+	
+	@RequestMapping(value = "/viewmaterialsupplier", method = RequestMethod.GET)
+	public ModelAndView viewMaterialSupplier(Locale locale, ModelMap model) {
+		int ulbId = getSessionUser().getUlbId();
+		InvMaterialSupplierForm invMaterialSupplierForm= new InvMaterialSupplierForm();
+		List<TmCmLookupDet> cmLookupDets=masterMaterialSupplierServ.getSupplierListByUlb(ulbId);
+		invMaterialSupplierForm.setSuppliersTyp(cmLookupDets);
+		model.addAttribute("suppliertyp", cmLookupDets);
+		model.addAttribute("supplierform", invMaterialSupplierForm);
+		model.addAttribute("ulbId", getSessionUser().getUlbId());
+		return new ModelAndView(prefixURL + "/master-search-supplier",
+				"command", model);
+	}
+	
+	
+	
+	@RequestMapping(value = "/viewmaterial", method = RequestMethod.GET)
+	public ModelAndView viewMaterial(Locale locale, ModelMap model) {
+		int ulbId = getSessionUser().getUlbId();
+		InvMaterialForm invMaterialForm= new InvMaterialForm();
+		List<TmInvMaterialType> invMaterialTypes= masterMaterialTypServ.findMaterialTypesByUlb(ulbId);
+		invMaterialForm.setInvMaterialTypes(invMaterialTypes);
+		model.addAttribute("materialTypes", invMaterialTypes);
+		model.addAttribute("materialform", invMaterialForm);
+		model.addAttribute("ulbId", getSessionUser().getUlbId());
+		return new ModelAndView(prefixURL + "/master-search-material",
+				"command", model);
 	}
 }

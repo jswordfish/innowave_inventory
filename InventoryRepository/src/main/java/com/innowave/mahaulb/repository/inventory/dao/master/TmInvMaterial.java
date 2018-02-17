@@ -185,7 +185,7 @@ public class TmInvMaterial implements java.io.Serializable {
 		this.tmUlb = tmUlb;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "material_type_id", nullable = false)
 	public TmInvMaterialType getTmInvMaterialType() {
 		return this.tmInvMaterialType;

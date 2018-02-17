@@ -35,6 +35,24 @@ public class MasterMaterialTypeServImpl implements MasterMaterialTypeServ{
 	}
 
 
+	@Override
+	public TmInvMaterialType getById(Long materialTypId) {
+		return inventoryRepo.getById(materialTypId);
+	}
+
+
+	@Override
+	public int removeById(TmInvMaterialType invMaterialType) {
+		return inventoryRepo.removeById(invMaterialType);
+	}
+
+
+	@Override
+	public List<TmInvMaterialType> findMaterialTypesByUlb(Integer ulbId) {
+		return inventoryRepo.findTmInvMaterialTypesByULB(ulbId);
+	}
+
+
 
 
 }

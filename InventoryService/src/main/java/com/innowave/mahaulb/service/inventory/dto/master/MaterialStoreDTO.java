@@ -14,6 +14,13 @@ public class MaterialStoreDTO implements java.io.Serializable{
 	public void setStoreId(Long storeId) {
 		this.storeId = storeId;
 	}
+	private String storeCode;
+	public String getStoreCode() {
+		return storeCode;
+	}
+	public void setStoreCode(String storeCode) {
+		this.storeCode = storeCode;
+	}
 	private Integer sequence;
 	private String storeName;
 	private String deptName;

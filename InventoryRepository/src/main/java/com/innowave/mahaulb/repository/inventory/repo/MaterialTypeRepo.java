@@ -21,5 +21,10 @@ public interface MaterialTypeRepo {
 	public List<TmInvMaterialType> getMasterTypeistByUlbAndParentTyp(Integer ulbId,String parentMaterialType);
 	
 	public List<TmInvMaterialType> fetchMaterialTypeByParentType(Integer ulbId,String materialType, String parentMaterialType);
+	
+	public List<TmInvMaterialType> getParentsList(Integer ulbId,String parentFlag);
+	
+	public int removeById(TmInvMaterialType invMaterialType);
+	
 
 }

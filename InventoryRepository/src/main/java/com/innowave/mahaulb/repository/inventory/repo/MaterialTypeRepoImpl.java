@@ -5,22 +5,23 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.innowave.mahaulb.common.dao.master.TmCmDepartment;
 import com.innowave.mahaulb.common.repository.TmCmDepartmentRepo;
 import com.innowave.mahaulb.repository.inventory.dao.master.TmInvMaterialType;
+import com.innowave.mahaulb.repository.inventory.dao.master.TmInvStore;
 @Repository
 @Transactional
 public class MaterialTypeRepoImpl implements MaterialTypeRepo{
@@ -41,7 +42,7 @@ public class MaterialTypeRepoImpl implements MaterialTypeRepo{
 			}
 			else {
 				//update
-				Mapper mapper = new DozerBeanMapper();
+				ModelMapper mapper = new ModelMapper();
 				mapper.map(materialType, invMaterialType);
 				invMaterialType.setUpdatedDate(new Date());
 				sessionFactory.getCurrentSession().merge(invMaterialType);
@@ -153,5 +154,30 @@ public class MaterialTypeRepoImpl implements MaterialTypeRepo{
 			query = query.where(where);
 		Query<TmInvMaterialType> queryObj=currentSession.createQuery(query);
 		return queryObj.getResultList();
+	}
+
+	@Override
+	public List<TmInvMaterialType> getParentsList(Integer ulbId,
+			String parentFlag) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+		CriteriaQuery<TmInvMaterialType> query = builder.createQuery(TmInvMaterialType.class);
+		Root<TmInvMaterialType> root = query.from(TmInvMaterialType.class);
+			Predicate where = builder.conjunction();
+			where  = builder.equal(root.get("tmUlb").get("ulbId"), ulbId);
+			where  = builder.and(where,builder.equal(root.get("parentTypeYn"), parentFlag));
+			query = query.where(where);
+		Query<TmInvMaterialType> queryObj=currentSession.createQuery(query);
+		return queryObj.getResultList();
+	}
+
+	@Override
+	public int removeById(TmInvMaterialType invMaterialType) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		CriteriaBuilder builder = currentSession.getCriteriaBuilder();
+		CriteriaDelete<TmInvStore> query = builder.createCriteriaDelete(TmInvStore.class);
+		Root e = query.from(TmInvStore.class);
+		query.where(builder.lessThanOrEqualTo(e.get("materialTypeId"), invMaterialType.getMaterialTypeId()));
+		return currentSession.createQuery(query).executeUpdate();
 	}
 }

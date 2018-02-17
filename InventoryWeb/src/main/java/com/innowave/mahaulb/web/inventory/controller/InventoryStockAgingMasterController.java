@@ -50,7 +50,7 @@ public class InventoryStockAgingMasterController {
 
 	private String storeSelected;
 
-	private final String prefixURL = "inventory";
+	private final String prefixURL = "inventory/masters";
 	
 	public UserBean getSessionUser() {
 

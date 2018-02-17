@@ -43,7 +43,7 @@ public class InventoryPriceMasterController {
 
 
 
-	private final String prefixURL = "inventory";
+	private final String prefixURL = "inventory/masters";
 	
 	@Autowired
 	UtilService utilService;

@@ -4,13 +4,17 @@ package com.innowave.mahaulb.repository.inventory.dao.master;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -120,7 +124,8 @@ public class TmInvSupplier implements java.io.Serializable {
 	}
 
 	@Id
-
+	@SequenceGenerator(allocationSize = 1, initialValue = 1, sequenceName = "inventory.sq_inv_supplier_id", name = "sq_inv_supplier_id")
+	@GeneratedValue(generator = "sq_inv_supplier_id", strategy = GenerationType.SEQUENCE)
 	@Column(name = "supplier_id", unique = true, nullable = false)
 	public long getSupplierId() {
 		return this.supplierId;
@@ -130,7 +135,7 @@ public class TmInvSupplier implements java.io.Serializable {
 		this.supplierId = supplierId;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "lookup_det_id_supp_type", nullable = false)
 	public TmCmLookupDet getTmCmLookupDet() {
 		return this.tmCmLookupDet;
@@ -150,7 +155,7 @@ public class TmInvSupplier implements java.io.Serializable {
 		this.tmUlb = tmUlb;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "supplier_parent_id")
 	public TmInvSupplier getTmInvSupplier() {
 		return this.tmInvSupplier;
