@@ -288,7 +288,14 @@ public class MasterMaterialTypeMappingController {
 		mapping.setMaterialTypeStoreMapId(materialTypeStoreMapId);
 		int rem = mappingRepository.removeTmInvMaterialTypeStoreMapping(mapping);
 		//List<TmInvMaterialType> mTypes = materialTypeRepository.r
-		List<MaterialTypeMappingDTO> dtos = fetchMappings(form.getStore(), ulbId,form.getDepartment());
+		List<MaterialTypeMappingDTO> dtos;
+		try {
+			dtos = fetchMappings(form.getStore(), ulbId,form.getDepartment());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return resetmaterialmapping(locale, model, req);
+		}
 		form.setMappingDTOs(dtos);
 		
 		model.addAttribute("materialMappingForm", form);
