@@ -75,7 +75,14 @@ public class MasterMaterialTypeMappingController {
 		form.setStore(store);
 		model.addAttribute("materialMappingForm", form);
 		
-		List<MaterialTypeMappingDTO> dtos = fetchMappings(store, ulbId, dep);
+		List<MaterialTypeMappingDTO> dtos;
+		try {
+			dtos = fetchMappings(store, ulbId, dep);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return resetmaterialmapping(locale, model, req);
+		}
 		form.setMappingDTOs(dtos);
 		//for()
 	
