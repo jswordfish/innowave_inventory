@@ -7,13 +7,17 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.innowave.mahaulb.common.dao.TmUlb;
 import com.innowave.mahaulb.repository.inventory.dao.master.TmInvStore;
@@ -42,6 +46,9 @@ public class TtInvScrap implements java.io.Serializable {
 	private Date approvedDate;
 	private String approvalRemarks;
 	private Integer createdBy;
+	
+	
+	
 	private Date createdDate;
 	private Integer updatedBy;
 	private Date updatedDate;
@@ -95,7 +102,8 @@ public class TtInvScrap implements java.io.Serializable {
 	}
 
 	@Id
-
+	@SequenceGenerator(name="sq_inv_scrap_id", sequenceName = "inventory.sq_inv_scrap_id", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator="sq_inv_scrap_id")
 	@Column(name = "scrap_id", unique = true, nullable = false)
 	public long getScrapId() {
 		return this.scrapId;
@@ -290,5 +298,9 @@ public class TtInvScrap implements java.io.Serializable {
 	public void setTtInvDisposals(Set<TtInvDisposal> ttInvDisposals) {
 		this.ttInvDisposals = ttInvDisposals;
 	}
+
+	
+	
+	
 
 }
