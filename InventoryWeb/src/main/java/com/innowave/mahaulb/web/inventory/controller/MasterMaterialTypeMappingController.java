@@ -81,6 +81,8 @@ public class MasterMaterialTypeMappingController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			model.put("message","Please select Store and Department");
+			model.put("msgtype","failure");
 			return resetmaterialmapping(locale, model, req);
 		}
 		form.setMappingDTOs(dtos);
@@ -199,7 +201,7 @@ public class MasterMaterialTypeMappingController {
 			Long.parseLong(store);
 		}
 		catch(NumberFormatException e) {
-			return delegate(locale, model, req);
+			//return delegate(locale, model, req);
 		}
 		
 		InventoryMaterialMappingForm form = (InventoryMaterialMappingForm) req.getSession().getAttribute("invForm");
@@ -210,15 +212,21 @@ public class MasterMaterialTypeMappingController {
 			form.setStore(store);
 			form.setDepartment(dep);
 			MaterialTypeMappingDTO current = new MaterialTypeMappingDTO();
-			TmCmDepartment department = depRepo.getDepartmentById(Integer.parseInt(dep));
-			current.setDepName(department.getDepNameEn());
-			TmInvStore store2 = mappingRepository.getStoreById(Long.parseLong(store));
-			current.setStoreName(store2.getStoreName());
-			current.setStoreId(store2.getStoreId());
+//			TmCmDepartment department = depRepo.getDepartmentById(Integer.parseInt(dep));
+//			current.setDepName(department.getDepNameEn());
+//			TmInvStore store2 = mappingRepository.getStoreById(Long.parseLong(store));
+//			current.setStoreName(store2.getStoreName());
+//			current.setStoreId(store2.getStoreId());
 			current.setAccountCode("Account Code NA");
 			form.setCurrentMappingDTO(current);
 			
 		//model.addAttribute("treeCensusDetail", ttTreeCensusDetails);
+			List<TmCmDepartment> deps = materialTypeRepository
+					.getAllDepartments(ulbId);
+
+			List<TmInvStore> stores = mappingRepository.getAllStores(ulbId);
+			model.addAttribute("departments", deps);
+			model.addAttribute("stores", stores);
 	
 		List<TmInvMaterialType> mTypes = materialTypeRepository.findTmInvMaterialTypesByULB(ulbId);
 		model.addAttribute("mTypes", mTypes);
@@ -263,6 +271,9 @@ public class MasterMaterialTypeMappingController {
 		int ulbId=getSessionUser().getUlbId();	
 		model.addAttribute("ulbId", ulbId);
 		Long materialTypeStoreMapId = Long.parseLong(req.getParameter("materialTypeStoreMapId"));
+		String store = req.getParameter("storeId");
+		String dep = req.getParameter("depId");
+			
 		InventoryMaterialMappingForm form = (InventoryMaterialMappingForm) req.getSession().getAttribute("invForm");
 			List<MaterialTypeMappingDTO> dtos = form.getMappingDTOs();
 			MaterialTypeMappingDTO current = null;
@@ -274,8 +285,19 @@ public class MasterMaterialTypeMappingController {
 			}
 			
 			form.setCurrentMappingDTO(current);
+			form.setDepartment(dep);
+			form.setStore(store);
 		model.addAttribute("invForm", form);
 		model.addAttribute("editMaping", true);
+		List<TmCmDepartment> deps = materialTypeRepository.getAllDepartments(ulbId);
+		
+		List<TmInvStore> stores = mappingRepository.getAllStores(ulbId);
+		
+		
+		//req.setAttribute("departments", deps);
+		//req.setAttribute("stores", stores);
+		model.addAttribute("departments", deps);
+		model.addAttribute("stores", stores);
 	
 		List<TmInvMaterialType> mTypes = materialTypeRepository.findTmInvMaterialTypesByULB(ulbId);
 		model.addAttribute("mTypes", mTypes);
@@ -322,7 +344,9 @@ public class MasterMaterialTypeMappingController {
 		String materialTypeId = req.getParameter("currentMappingDTO.materialTypeId");
 		String active =req.getParameter("currentMappingDTO.active");
 		
+		String store = req.getParameter("store");
 		
+		String department = req.getParameter("department");
 		
 		
 		InventoryMaterialMappingForm form = (InventoryMaterialMappingForm) req.getSession().getAttribute("invForm");
@@ -330,8 +354,26 @@ public class MasterMaterialTypeMappingController {
 			if(materialTypeId == null) {
 				materialTypeId = mappingDTO.getMaterialTypeId()+"";
 			}
-		
-		mappingDTO.setMaterialTypeId(Long.parseLong(materialTypeId));
+			
+			if(store == null) {
+				store = form.getStore();
+			}
+			
+			if(department == null) {
+				department = form.getDepartment();
+			}
+		form.setDepartment(department);
+		form.setStore(store);
+		try {
+			mappingDTO.setStoreId(Long.parseLong(store));
+			mappingDTO.setMaterialTypeId(Long.parseLong(materialTypeId));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			model.put("message","Select Material Type and Store from dropdowns");
+			model.put("msgtype","info");
+			return viewMaterialMappingAdd(locale, model, req);
+		}
 		
 		TmInvMaterialTypeStoreMapping mapping = new TmInvMaterialTypeStoreMapping();
 		mapping.setUpdatedBy(getSessionUser().getUserId());
@@ -353,7 +395,7 @@ public class MasterMaterialTypeMappingController {
 		mapping.setStatus((active!=null && active.equals("true"))?1:0);
 		
 		mappingRepository.saveOrUpdate(mapping);
-		List<MaterialTypeMappingDTO> dtos = fetchMappings(""+mapping.getTmInvStore().getStoreId(), ulbId,form.getDepartment());
+		List<MaterialTypeMappingDTO> dtos = fetchMappings(""+mapping.getTmInvStore().getStoreId(), ulbId, department);
 //		boolean present = false;
 //		for(MaterialTypeMappingDTO dto : form.getMappingDTOs()) {
 //			if(dto.getMaterialTypeId().equals(mappingDTO.getMaterialTypeId()) && dto.getStoreCode().equals(mappingDTO.getStoreCode())){
@@ -368,10 +410,13 @@ public class MasterMaterialTypeMappingController {
 		form.setMappingDTOs(dtos);
 			
 		model.addAttribute("materialMappingForm", form);
+		req.getSession().setAttribute("materialMappingForm", form);
 		
 		model.addAttribute("dtos", dtos);
 	   // return prefixURL+"/view-materialmappingsearch";
 		//return new InventoryMenuController().viewMaterialMapping(locale, model, req);
+		model.put("message","Save Successful");
+		model.put("msgtype","success");
 		return delegate(locale, model, req);
     }
 	
